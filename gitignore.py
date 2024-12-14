@@ -2,6 +2,7 @@ import streamlit as st
 from PIL import Image, ImageDraw
 import requests
 from io import BytesIO
+import time
 
 # Google Drive 圖片 URL（轉換為直接下載格式）
 url_a = "https://drive.google.com/uc?export=download&id=1ZMkNBHG2HF9WsJVw2OdpltGBpyg2HJX4"
@@ -21,26 +22,40 @@ def load_image_from_url(url):
 image_a = load_image_from_url(url_a)
 image_b = load_image_from_url(url_b)
 
-# 在胸肌上畫手的效果
+# 在圖片上添加手掌效果
 def add_hands_effect(image):
     draw = ImageDraw.Draw(image)
-    draw.ellipse((100, 150, 200, 250), fill="red")  # 第一隻手
-    draw.ellipse((250, 150, 350, 250), fill="red")  # 第二隻手
+    # 假設圖片中心為 (0, 0)，將 (0, 3) 轉換為像素位置
+    width, height = image.size
+    center_x, center_y = width // 2, height // 2
+    hand_x, hand_y = center_x, center_y - int(height * 0.1 * 3)  # (0, 3) 表示高度的 3 倍距離
+
+    # 繪製手掌形狀（矩形近似）
+    draw.rectangle((hand_x - 50, hand_y - 70, hand_x + 50, hand_y + 30), fill="brown", outline="black")
+    draw.ellipse((hand_x - 60, hand_y - 30, hand_x - 30, hand_y), fill="brown", outline="black")  # 手掌圓弧
     return image
 
-# 添加白色水噴射效果
+# 添加動態白色噴射效果
 def add_water_effect(image):
-    draw = ImageDraw.Draw(image)
-    draw.line((150, 100, 200, 300), fill="white", width=15)  # 水柱
-    draw.ellipse((190, 90, 210, 110), fill="white")  # 噴射點
-    return image
+    width, height = image.size
+    center_x, center_y = width // 2, height // 2
+    frames = []
+
+    for i in range(20):  # 20 幀對應約 5 秒
+        frame = image.copy()
+        draw = ImageDraw.Draw(frame)
+        # 動態水線效果
+        draw.line((center_x, center_y, center_x, center_y - 50 - i * 10), fill="white", width=5)
+        draw.ellipse((center_x - 5, center_y - 60 - i * 10, center_x + 5, center_y - 50 - i * 10), fill="white")
+        frames.append(frame)
+    return frames
 
 # Streamlit 網頁標題
 st.title("圖片特效選擇程式")
 
 # 提供選擇選項
 st.write("請選擇以下效果：")
-option = st.selectbox("選擇效果 (A 或 B)：", ("A - 摸胸肌效果", "B - YY 噴射效果"))
+option = st.selectbox("選擇效果 (A 或 B)：", ("A - 摸子恆胸肌", "B - 12 子恆"))
 
 # 根據選擇顯示結果
 if option == "A - 摸胸肌效果" and image_a is not None:
@@ -50,5 +65,7 @@ if option == "A - 摸胸肌效果" and image_a is not None:
 
 elif option == "B - YY 噴射效果" and image_b is not None:
     st.subheader("你選擇了：YY 噴射效果")
-    result_image = add_water_effect(image_b.copy())
-    st.image(result_image, caption="已添加噴射效果", use_column_width=True)
+    frames = add_water_effect(image_b.copy())
+    for frame in frames:
+        st.image(frame, use_column_width=True)
+        time.sleep(0.25)
