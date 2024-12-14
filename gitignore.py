@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw
 import requests
 from io import BytesIO
 import time
+import random
 
 # Google Drive 圖片 URL（轉換為直接下載格式）
 url_a = "https://drive.google.com/uc?export=download&id=1ZMkNBHG2HF9WsJVw2OdpltGBpyg2HJX4"
@@ -25,10 +26,11 @@ image_b = load_image_from_url(url_b)
 # 在圖片上添加手掌效果
 def add_hands_effect(image):
     draw = ImageDraw.Draw(image)
-    # 假設圖片中心為 (0, 0)，將 (0, 3) 轉換為像素位置
+    # 假設圖片中心為 (0, 0)，將 (-1, 1) 轉換為像素位置
     width, height = image.size
     center_x, center_y = width // 2, height // 2
-    hand_x, hand_y = center_x, center_y - int(height * 0.3)  # (0, 3) 表示高度的 3 倍距離
+    hand_x = center_x - int(width * 0.1)  # 向左偏移 10%
+    hand_y = center_y - int(height * 0.1)  # 向上偏移 10%
 
     # 繪製手掌形狀（矩形與圓弧結合）
     draw.ellipse((hand_x - 30, hand_y - 30, hand_x + 30, hand_y + 30), fill="brown", outline="black")  # 手掌圓心
@@ -36,18 +38,22 @@ def add_hands_effect(image):
     draw.rectangle((hand_x + 30, hand_y - 10, hand_x + 50, hand_y + 40), fill="brown", outline="black")  # 右手指
     return image
 
-# 添加動態白色噴射效果
+# 添加動態不規則白色噴射效果
 def add_water_effect(image):
     width, height = image.size
-    center_x, center_y = width // 2, height // 2
     frames = []
 
     for i in range(20):  # 20 幀對應約 5 秒
         frame = image.copy()
         draw = ImageDraw.Draw(frame)
-        # 動態水線效果
-        draw.line((center_x, center_y, center_x, center_y - 50 - i * 10), fill="white", width=5)
-        draw.ellipse((center_x - 5, center_y - 60 - i * 10, center_x + 5, center_y - 50 - i * 10), fill="white")
+        # 動態多條不規則水線效果
+        for _ in range(random.randint(3, 6)):  # 隨機生成 3 到 6 條水線
+            start_x = random.randint(0, width)
+            start_y = random.randint(height // 2, height)
+            end_x = start_x + random.randint(-50, 50)
+            end_y = start_y - random.randint(50, 150)
+            draw.line((start_x, start_y, end_x, end_y), fill="white", width=random.randint(2, 5))
+            draw.ellipse((end_x - 5, end_y - 5, end_x + 5, end_y + 5), fill="white")
         frames.append(frame)
     return frames
 
