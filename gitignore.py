@@ -25,18 +25,22 @@ image_b = load_image_from_url(url_b)
 
 # 在圖片上添加手掌效果
 def add_hands_effect(image):
-    draw = ImageDraw.Draw(image)
-    # 假設圖片中心為 (0, 0)，將 (-1, 1) 轉換為像素位置
-    width, height = image.size
-    center_x, center_y = width // 2, height // 2
-    hand_x = center_x - int(width * 0.1)  # 向左偏移 10%
-    hand_y = center_y - int(height * 0.1)  # 向上偏移 10%
+    frames = []
+    for _ in range(10):  # 10 幀對應約 5 秒，每幀間隔 0.5 秒
+        frame = image.copy()
+        draw = ImageDraw.Draw(frame)
+        # 假設圖片中心為 (0, 0)，將 (-1, 1) 轉換為像素位置
+        width, height = frame.size
+        center_x, center_y = width // 2, height // 2
+        hand_x = center_x - int(width * 0.07)  # 向左偏移 10%
+        hand_y = center_y - int(height * 0.1)  # 向上偏移 10%
 
-    # 繪製手掌形狀（矩形與圓弧結合）
-    draw.ellipse((hand_x - 30, hand_y - 30, hand_x + 30, hand_y + 30), fill="brown", outline="black")  # 手掌圓心
-    draw.rectangle((hand_x - 50, hand_y - 10, hand_x - 30, hand_y + 40), fill="brown", outline="black")  # 左手指
-    draw.rectangle((hand_x + 30, hand_y - 10, hand_x + 50, hand_y + 40), fill="brown", outline="black")  # 右手指
-    return image
+        # 繪製手掌形狀（矩形與圓弧結合）
+        draw.ellipse((hand_x - 30, hand_y - 30, hand_x + 30, hand_y + 30), fill="brown", outline="black")  # 手掌圓心
+        draw.rectangle((hand_x - 50, hand_y - 10, hand_x - 30, hand_y + 40), fill="brown", outline="black")  # 左手指
+        draw.rectangle((hand_x + 30, hand_y - 10, hand_x + 50, hand_y + 40), fill="brown", outline="black")  # 右手指
+        frames.append(frame)
+    return frames
 
 # 添加動態不規則白色噴射效果
 def add_water_effect(image):
@@ -62,20 +66,23 @@ st.title("圖片特效選擇程式")
 
 # 提供選擇選項
 st.write("請選擇以下效果：")
-option = st.selectbox("選擇效果 (A 或 B)：", ("A - 摸胸肌效果", "B - YY 噴射效果"))
+option = st.selectbox("選擇效果 (A 或 B)：", ("A - 摸子恆胸肌", "B - 12 在子恆臉上"))
 
 # 測試圖片是否加載成功
 st.write(f"Image A loaded: {image_a is not None}")
 st.write(f"Image B loaded: {image_b is not None}")
 
 # 根據選擇顯示結果
-if option == "A - 摸胸肌效果" and image_a is not None:
-    st.subheader("你選擇了：摸胸肌效果")
-    result_image = add_hands_effect(image_a.copy())
-    st.image(result_image, caption="已添加摸胸肌效果", use_column_width=True)
+if option == "A - 摸子恆胸肌" and image_a is not None:
+    st.subheader("你選擇了：摸子恆胸肌")
+    frames = add_hands_effect(image_a.copy())
+    placeholder = st.empty()  # 創建一個可動態更新的容器
+    for frame in frames:
+        placeholder.image(frame, use_column_width=True)
+        time.sleep(0.5)  # 每幀間隔 0.5 秒
 
-elif option == "B - YY 噴射效果" and image_b is not None:
-    st.subheader("你選擇了：YY 噴射效果")
+elif option == "B - 12 在子恆臉上" and image_b is not None:
+    st.subheader("你選擇了：12 在子恆臉上")
     frames = add_water_effect(image_b.copy())
     placeholder = st.empty()  # 創建一個可動態更新的容器
     for frame in frames:
