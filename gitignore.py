@@ -56,7 +56,7 @@ def add_water_effect(image):
 
 # C 模式：將指定圖片疊加到目標圖片上
 def add_c_overlay(background_image, overlay_image, size):
-    position = (background_image.width // 2 - size[0] // 2, background_image.height // 2 + 100)
+    position = (background_image.width // 2 - size[0] // 2, background_image.height // 2 + 0)
     return add_overlay_image(background_image, overlay_image, position, size)
 
 # Streamlit 網頁標題
@@ -82,7 +82,7 @@ if option == "摸子恆胸肌" and image_a is not None and hand_image is not Non
             size=(150, 150)
         )
         image_placeholder.image(result_image, caption="已添加摸子恆胸肌效果", use_column_width=True)
-        time.sleep(0.3)  # 暫停 0.3 秒
+        time.sleep(1)  # 暫停 0.3 秒
         image_placeholder.image(image_a, caption="原始圖片", use_column_width=True)
 
 elif option == "顏設子恆" and image_b is not None:
@@ -94,7 +94,7 @@ elif option == "顏設子恆" and image_b is not None:
         frames = add_water_effect(image_b.copy())
         for frame in frames:
             image_placeholder.image(frame, use_column_width=True)
-            time.sleep(0.5)
+            time.sleep(1)
         image_placeholder.image(image_b, caption="原始圖片", use_column_width=True)
 
 elif option == "請子恆吃基基" and image_c is not None and c_overlay_image is not None:
@@ -108,5 +108,5 @@ elif option == "請子恆吃基基" and image_c is not None and c_overlay_image 
             size=(150, 150)  # 調整疊加圖片大小
         )
         image_placeholder.image(result_image, caption="已顯示請子恆吃基基效果", use_column_width=True)
-        time.sleep(0.7)  # 暫停 0.3 秒
+        time.sleep(1)  # 暫停 0.3 秒
         image_placeholder.image(image_c, caption="原始圖片", use_column_width=True)
