@@ -10,7 +10,7 @@ url_a = "https://drive.google.com/uc?export=download&id=1ZMkNBHG2HF9WsJVw2OdpltG
 url_b = "https://drive.google.com/uc?export=download&id=1I-Hh8vgS4-f9spCHmcqY8rHJxzwtb_84"
 url_c = "https://drive.google.com/uc?export=download&id=1g0TBjO1J5EyvhcmYjlL9B24eVKMO1bTG"
 url_hand = "https://drive.google.com/uc?export=download&id=1RwSpl9CzH2TtxNS6gNuZAovrVe17YnM0"
-url_c_overlay = "https://drive.google.com/uc?export=download&id=1ef5JbC9k87oSsYKPzPcpWCfLbYV6yZHY"
+url_c_overlay = "https://drive.google.com/uc?export=download&id=1HZYrv1mX8k3-MrRgw-8VG3w0zz3zgBY9"
 
 # 從網路加載圖片
 def load_image_from_url(url):
@@ -78,7 +78,7 @@ if option == "摸子恆胸肌" and image_a is not None and hand_image is not Non
     if st.button("顯示摸子恆胸肌效果"):
         result_image = add_overlay_image(
             image_a.copy(), hand_image,
-            position=(image_a.width // 2 - 70, image_a.height // 2 - 80),
+            position=(image_a.width // 2 - 125, image_a.height // 2 - 125),  # 調整位置往左上
             size=(150, 150)
         )
         image_placeholder.image(result_image, caption="已添加摸子恆胸肌效果", use_column_width=True)
@@ -108,5 +108,5 @@ elif option == "請子恆吃基基" and image_c is not None and c_overlay_image 
             size=(100, 100)  # 調整疊加圖片大小
         )
         image_placeholder.image(result_image, caption="已顯示請子恆吃基基效果", use_column_width=True)
-        time.sleep(0.3)  # 暫停 0.3 秒
+        time.sleep(0.5)  # 暫停 0.3 秒
         image_placeholder.image(image_c, caption="原始圖片", use_column_width=True)
