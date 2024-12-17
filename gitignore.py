@@ -32,8 +32,8 @@ c_overlay_image = load_image_from_url(url_c_overlay)
 # A 模式：將手掌圖片疊加到目標圖片上
 def add_overlay_image(background_image, overlay_image, position, size):
     background = background_image.convert("RGBA")
-    overlay_resized = overlay_image.resize(size)  # 調整疊加圖片大小
-    background.paste(overlay_resized, position, overlay_resized)
+    overlay_resized = overlay_image.resize(size).convert("RGBA")  # 確保圖片是 RGBA 格式
+    background.paste(overlay_resized, position, overlay_resized)  # 使用透明度遮罩進行疊加
     return background
 
 # B 模式：添加動態不規則白色噴射效果
@@ -56,7 +56,6 @@ def add_water_effect(image):
 
 # C 模式：將指定圖片疊加到目標圖片上
 def add_c_overlay(background_image, overlay_image, size):
-    # 調整疊加圖片大小
     position = (background_image.width // 2 - size[0] // 2, background_image.height // 2 + 50)
     return add_overlay_image(background_image, overlay_image, position, size)
 
@@ -70,34 +69,44 @@ option = st.selectbox(
     ("摸子恆胸肌", "顏設子恆", "請子恆吃基基")
 )
 
-# 根據選擇顯示初始圖片
+# 根據選擇顯示初始圖片並處理按鈕效果
 if option == "摸子恆胸肌" and image_a is not None and hand_image is not None:
     st.subheader("你選擇了：摸子恆胸肌")
-    st.image(image_a, caption="原始圖片", use_column_width=True)
+    image_placeholder = st.empty()
+    image_placeholder.image(image_a, caption="原始圖片", use_column_width=True)
+
     if st.button("顯示摸子恆胸肌效果"):
         result_image = add_overlay_image(
-            image_a.copy(), hand_image, 
-            position=(image_a.width // 2 - 75, image_a.height // 2 - 75), 
-            size=(150, 150)  # 調整手掌圖片大小
+            image_a.copy(), hand_image,
+            position=(image_a.width // 2 - 70, image_a.height // 2 - 80),
+            size=(150, 150)
         )
-        st.image(result_image, caption="已添加摸子恆胸肌效果", use_column_width=True)
+        image_placeholder.image(result_image, caption="已添加摸子恆胸肌效果", use_column_width=True)
+        time.sleep(0.3)  # 暫停 0.3 秒
+        image_placeholder.image(image_a, caption="原始圖片", use_column_width=True)
 
 elif option == "顏設子恆" and image_b is not None:
     st.subheader("你選擇了：顏設子恆")
-    st.image(image_b, caption="原始圖片", use_column_width=True)
+    image_placeholder = st.empty()
+    image_placeholder.image(image_b, caption="原始圖片", use_column_width=True)
+
     if st.button("開始顏設子恆效果"):
         frames = add_water_effect(image_b.copy())
-        placeholder = st.empty()
         for frame in frames:
-            placeholder.image(frame, use_column_width=True)
+            image_placeholder.image(frame, use_column_width=True)
             time.sleep(0.25)
+        image_placeholder.image(image_b, caption="原始圖片", use_column_width=True)
 
 elif option == "請子恆吃基基" and image_c is not None and c_overlay_image is not None:
     st.subheader("你選擇了：請子恆吃基基")
-    st.image(image_c, caption="原始圖片", use_column_width=True)
+    image_placeholder = st.empty()
+    image_placeholder.image(image_c, caption="原始圖片", use_column_width=True)
+
     if st.button("顯示請子恆吃基基效果"):
         result_image = add_c_overlay(
-            image_c.copy(), c_overlay_image, 
+            image_c.copy(), c_overlay_image,
             size=(100, 100)  # 調整疊加圖片大小
         )
-        st.image(result_image, caption="已顯示請子恆吃基基效果", use_column_width=True)
+        image_placeholder.image(result_image, caption="已顯示請子恆吃基基效果", use_column_width=True)
+        time.sleep(0.3)  # 暫停 0.3 秒
+        image_placeholder.image(image_c, caption="原始圖片", use_column_width=True)
