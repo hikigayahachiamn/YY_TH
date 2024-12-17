@@ -56,7 +56,7 @@ def add_water_effect(image):
 
 # C 模式：將指定圖片疊加到目標圖片上
 def add_c_overlay(background_image, overlay_image, size):
-    position = (background_image.width // 2 - size[0] // 2+20, background_image.height // 2 + 0)
+    position = (background_image.width // 2 - size[0] // 2 + 50, background_image.height // 2 + 0)
     return add_overlay_image(background_image, overlay_image, position, size)
 
 # Streamlit 網頁標題
